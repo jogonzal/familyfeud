@@ -57,8 +57,10 @@ export const AddAnswerDialog = ({
                 if (hasError) return;
 
                 onAnswerAdded({
+                  id: "id" + Math.random().toString(16).slice(2),
                   answer: answer,
                   points: parseInt(value),
+                  unlocked: false,
                 });
               }}
             >
