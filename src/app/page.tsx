@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { PlaySound } from "../components/PlaySound";
-import { ClientWrapper } from "@/components/ClientWrapper";
+import { SpecialButton } from "@/components/SpecialButton";
 
 export default function Home() {
   return (
@@ -16,6 +16,7 @@ export default function Home() {
         priority
       />
       <PlaySound />
+      <SpecialButton />
     </div>
   );
 }
