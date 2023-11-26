@@ -69,11 +69,46 @@ export const GameBoard = () => {
     }
   );
 
+  const badAnswerSound = useSound("/sounds/family-feud-bad-answer.mp3", {
+    // `interrupt` ensures that if the sound starts again before it's
+    // ended, it will truncate it. Otherwise, the sound can overlap.
+    interrupt: true,
+  });
+
+  const [totalMisses, setTotalMisses] = useStateWithLocalStorage(
+    0,
+    "totalMissesv1"
+  );
+
   const totalPoints = answers.reduce((prev, curr) => {
     if (!curr.unlocked) return prev;
 
     return curr.points + prev;
   }, 0);
+
+  const renderTotalMisses = () => {
+    const rendered = [];
+
+    for (let i = 0; i < totalMisses; i++) {
+      rendered.push(<Title1 key={i}>❌</Title1>);
+    }
+
+    if (totalMisses < 3) {
+      rendered.push(
+        <Button
+          key={"MissButton"}
+          onClick={() => {
+            setTotalMisses(totalMisses + 1);
+            badAnswerSound[0]();
+          }}
+        >
+          Miss!
+        </Button>
+      );
+    }
+
+    return rendered;
+  };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -226,6 +261,17 @@ export const GameBoard = () => {
         <div
           style={{
             display: "flex",
+            justifyContent: "space-around",
+            flexDirection: "row",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "row", gap: "10px" }}>
+            {renderTotalMisses()}
+          </div>
+        </div>
+        <div
+          style={{
+            display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
           }}
@@ -281,6 +327,7 @@ export const GameBoard = () => {
           <Button
             onClick={() => {
               setAnswers([]);
+              setTotalMisses(0);
             }}
           >
             Clear answers
@@ -307,6 +354,7 @@ export const GameBoard = () => {
               onAnswersAdded={(newAnswers) => {
                 newAnswers.forEach((ans) => (ans.unlocked = false));
                 setAnswers(newAnswers);
+                setTotalMisses(0);
               }}
               showing={importAnswersDialog}
               onClose={() => setImportAnswersDialog(false)}
@@ -328,6 +376,13 @@ export const GameBoard = () => {
             />
           </Field>
 
+          <Field label="Team 2 points">
+            <Textarea
+              value={team2Points.toString()}
+              onChange={(ev, val) => setTeam2Points(parseInt(val.value))}
+            />
+          </Field>
+
           <Field label="Team 2 name">
             <Textarea
               value={team2Name}
@@ -335,10 +390,10 @@ export const GameBoard = () => {
             />
           </Field>
 
-          <Field label="Team 2 points">
+          <Field label="Total misses">
             <Textarea
-              value={team2Points.toString()}
-              onChange={(ev, val) => setTeam2Points(parseInt(val.value))}
+              value={totalMisses.toString()}
+              onChange={(ev, val) => setTotalMisses(parseInt(val.value))}
             />
           </Field>
         </div>
