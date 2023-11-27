@@ -343,6 +343,7 @@ export const GameBoard = () => {
             onClick={() => {
               setAnswers([]);
               setTotalMisses(0);
+              setQuestion("");
             }}
           >
             Clear answers
