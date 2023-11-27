@@ -371,7 +371,7 @@ export const GameBoard = () => {
                 obj.answers.forEach((ans) => (ans.unlocked = false));
                 setAnswers(obj.answers);
                 setTotalMisses(0);
-                setQuestion(question);
+                setQuestion(obj.question);
               }}
               showing={importAnswersDialog}
               onClose={() => setImportAnswersDialog(false)}
