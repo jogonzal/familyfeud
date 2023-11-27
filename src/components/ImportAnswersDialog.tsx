@@ -9,16 +9,21 @@ import {
   Title1,
 } from "@fluentui/react-components";
 
+export interface IImportThing {
+  answers: IAnswer[];
+  question: string;
+}
+
 export const ImportAnswersDialog = ({
-  onAnswersAdded,
+  onDataAdded: onAnswersAdded,
   showing,
   onClose,
   answers,
 }: {
-  onAnswersAdded: (newAnswers: IAnswer[]) => void;
+  onDataAdded: (obj: IImportThing) => void;
   showing: boolean;
   onClose: () => void;
-  answers: IAnswer[];
+  answers: IImportThing;
 }) => {
   const [value, setValue] = useState(JSON.stringify(answers, null, "\t"));
 

@@ -8,6 +8,7 @@ import {
   Title1,
   Title2,
   Textarea,
+  Title3,
 } from "@fluentui/react-components";
 import { useState } from "react";
 import { AddAnswerDialog } from "./AddAnswerDialog";
@@ -59,6 +60,8 @@ export const GameBoard = () => {
     "Team 2",
     "team2name"
   );
+
+  const [question, setQuestion] = useStateWithLocalStorage("", "questionv1");
 
   const [play, { stop, pause }] = useSound(
     "/sounds/family-feud-good-answer.mp3",
@@ -138,6 +141,18 @@ export const GameBoard = () => {
         >
           <Title1>{totalPoints}</Title1>
         </div>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "row",
+            justifyContent: "space-around",
+          }}
+        >
+          <Title3>{question}</Title3>
+        </div>
+
         <div
           style={{
             display: "flex",
@@ -351,14 +366,18 @@ export const GameBoard = () => {
 
           {importAnswersDialog && (
             <ImportAnswersDialog
-              onAnswersAdded={(newAnswers) => {
-                newAnswers.forEach((ans) => (ans.unlocked = false));
-                setAnswers(newAnswers);
+              onDataAdded={(obj) => {
+                obj.answers.forEach((ans) => (ans.unlocked = false));
+                setAnswers(obj.answers);
                 setTotalMisses(0);
+                setQuestion(question);
               }}
               showing={importAnswersDialog}
               onClose={() => setImportAnswersDialog(false)}
-              answers={answers}
+              answers={{
+                answers,
+                question,
+              }}
             />
           )}
 
@@ -394,6 +413,13 @@ export const GameBoard = () => {
             <Textarea
               value={totalMisses.toString()}
               onChange={(ev, val) => setTotalMisses(parseInt(val.value))}
+            />
+          </Field>
+
+          <Field label="Question">
+            <Textarea
+              value={question}
+              onChange={(ev, val) => setQuestion(val.value)}
             />
           </Field>
         </div>
