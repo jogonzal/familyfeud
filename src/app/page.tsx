@@ -1,15 +1,22 @@
 "use client"; // All client side rendering :)
 
-import { useState } from "react";
-import { Title1 } from "@fluentui/react-components";
-import { SoundBoard } from "@/components/SoundBoard";
+import { Switch, Title1 } from "@fluentui/react-components";
+import {
+  SoundBoard,
+  brandImage100MexicanosDijeron,
+  brandImageFamilyFeud,
+  logo100MexicanosDijeron,
+  logoFamilyFeud,
+} from "@/components/SoundBoard";
 import { GameBoard } from "@/components/GameBoard";
 import Image from "next/image";
+import { useStateWithLocalStorage } from "@/storage/useStateWithLocalStorage";
+
+export type GameType = "family-feud" | "100-mexicanos-dijeron";
 
 export default function Home() {
-  const [song, setSong] = useState<
-    { filename: string; song: string } | undefined
-  >(undefined);
+  const [currentGameType, setCurrentGameType] =
+    useStateWithLocalStorage<GameType>("family-feud", "currentGameType");
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -21,12 +28,49 @@ export default function Home() {
           alignItems: "center",
         }}
       >
-        <Title1>Let&apos;s play Family Feud!</Title1>
-        <Image alt="" src="/img/SteveHarvey.jpg" width={70} height={70} />
-        <img src="/img/family-feud.png" height="70px" />
+        <Title1>
+          {currentGameType === "100-mexicanos-dijeron"
+            ? "Juguemos 100 Mexicanos Dijeron!"
+            : "Let's play Family Feud!"}
+        </Title1>
+        <Image
+          alt=""
+          src={
+            currentGameType === "100-mexicanos-dijeron"
+              ? logo100MexicanosDijeron
+              : logoFamilyFeud
+          }
+          width={120}
+          height={70}
+        />
+        <Image
+          alt=""
+          src={
+            currentGameType === "100-mexicanos-dijeron"
+              ? brandImage100MexicanosDijeron
+              : brandImageFamilyFeud
+          }
+          height={70}
+          width={70}
+        />
+        <Switch
+          label={
+            currentGameType === "100-mexicanos-dijeron"
+              ? "100 Mexicanos Dijeron"
+              : "Family Feud"
+          }
+          checked={currentGameType === "family-feud"}
+          onChange={(ev, val) => {
+            if (val.checked) {
+              setCurrentGameType("family-feud");
+            } else {
+              setCurrentGameType("100-mexicanos-dijeron");
+            }
+          }}
+        />
       </div>
-      <SoundBoard />
-      <GameBoard />
+      <SoundBoard currentGameType={currentGameType} />
+      <GameBoard currentGameType={currentGameType} />
     </div>
   );
 }

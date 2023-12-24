@@ -21,6 +21,13 @@ import {
 } from "@fluentui/react-icons";
 import { useSound } from "use-sound";
 import { ImportAnswersDialog } from "./ImportAnswersDialog";
+import {
+  soundBadAnswer100MexicanosDijeron,
+  soundBadAnswerFamilyFeud,
+  soundGoodAnswer100MexicanosDijeron,
+  soundGoodAnswerFamilyFeud,
+} from "./SoundBoard";
+import { GameType } from "@/app/page";
 
 export interface IAnswer {
   points: number;
@@ -29,7 +36,11 @@ export interface IAnswer {
   id: string;
 }
 
-export const GameBoard = () => {
+export const GameBoard = ({
+  currentGameType,
+}: {
+  currentGameType: GameType;
+}) => {
   const [answers, setAnswers] = useStateWithLocalStorage<IAnswer[]>(
     [],
     "answersv1"
@@ -63,16 +74,23 @@ export const GameBoard = () => {
 
   const [question, setQuestion] = useStateWithLocalStorage("", "questionv1");
 
-  const [play, { stop, pause }] = useSound(
-    "/sounds/family-feud-good-answer.mp3",
-    {
-      // `interrupt` ensures that if the sound starts again before it's
-      // ended, it will truncate it. Otherwise, the sound can overlap.
-      interrupt: true,
-    }
-  );
+  const goodAnswer =
+    currentGameType === "family-feud"
+      ? soundGoodAnswerFamilyFeud
+      : soundGoodAnswer100MexicanosDijeron;
 
-  const badAnswerSound = useSound("/sounds/family-feud-bad-answer.mp3", {
+  const [play, { stop, pause }] = useSound(goodAnswer, {
+    // `interrupt` ensures that if the sound starts again before it's
+    // ended, it will truncate it. Otherwise, the sound can overlap.
+    interrupt: true,
+  });
+
+  const badAnswer =
+    currentGameType === "family-feud"
+      ? soundBadAnswerFamilyFeud
+      : soundBadAnswer100MexicanosDijeron;
+
+  const badAnswerSound = useSound(badAnswer, {
     // `interrupt` ensures that if the sound starts again before it's
     // ended, it will truncate it. Otherwise, the sound can overlap.
     interrupt: true,
